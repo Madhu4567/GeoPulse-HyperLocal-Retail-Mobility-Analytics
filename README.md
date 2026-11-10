@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GeoPulse — Hyper-Local Retail Mobility Analytics
 
 **Domain:** Retail Strategy & Geospatial Analytics
@@ -51,3 +52,4 @@ pip install -r requirements.txt
 ```
 
 This is scaffolding only. Do not claim cloud/tool integrations until they are configured and tested.
+
