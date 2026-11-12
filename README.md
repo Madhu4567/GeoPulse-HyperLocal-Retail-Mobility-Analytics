@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # GeoPulse — Hyper-Local Retail Mobility Analytics
 
 **Domain:** Retail Strategy & Geospatial Analytics
@@ -16,7 +16,7 @@ GeoPulse is a learning prototype that uses synthetic, anonymized-style GPS pings
 - Apache Airflow — orchestration
 
 ## Repository structure
-```text
+text
 data/                 # Synthetic raw and processed datasets
 notebooks/            # Exploration
 src/data_generation/  # Synthetic GPS ping generation
@@ -30,7 +30,7 @@ airflow/dags/         # Airflow DAGs
 tests/                # Tests
 reports/              # Findings and charts
 docs/                 # Architecture and scope
-```
+
 
 ## Milestones
 1. Define schema and generate synthetic GPS pings.
@@ -44,12 +44,11 @@ docs/                 # Architecture and scope
 
 ## Quick start
 Python 3.10+ recommended.
-```bash
+bash
 python -m venv .venv
 # Windows PowerShell:
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-```
 
 This is scaffolding only. Do not claim cloud/tool integrations until they are configured and tested.
 

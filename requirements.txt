@@ -1,1 +1,4 @@
-pandas>=2.2,<3.0\nnumpy>=1.26,<3.0\npython-dateutil>=2.9\npytest>=8.0\n
+pandas>=2.2,<3.0
+numpy>=1.26,<3.0
+python-dateutil>=2.9
+pytest>=8.0
