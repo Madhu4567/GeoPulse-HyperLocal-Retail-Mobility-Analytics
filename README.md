@@ -1,55 +1,172 @@
-<<<<<<< HEAD
-# GeoPulse — Hyper-Local Retail Mobility Analytics
+# 📍 GeoPulse — Hyper-Local Retail Mobility Analytics
 
-**Domain:** Retail Strategy & Geospatial Analytics
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Database](https://img.shields.io/badge/Warehouse-Snowflake-29B5E8.svg)](https://www.snowflake.com/)
+[![Transformation](https://img.shields.io/badge/Transform-dbt-FF694B.svg)](https://www.getdbt.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Phase%202%20In%20Progress-orange.svg)](#)
 
-GeoPulse is a learning prototype that uses synthetic, anonymized-style GPS pings to explore hourly footfall, store catchment areas, spatial overlap, and potential traffic cannibalization.
+---
 
-> **Privacy and accuracy:** Use synthetic data only at this stage. Do not upload real mobile-location data or personally identifiable information. Any cannibalization percentage must be calculated from the generated dataset and labelled as an estimate, not a real-world fact.
+## 1. Project Overview
 
-## Planned technology stack
-- Python / PySpark — data generation and processing
-- Snowflake — storage and `GEOGRAPHY` operations (when configured)
-- Apache Sedona — spatial joins (when configured)
-- dbt — hourly footfall transformations
-- Kepler.gl — geospatial visualization
-- Apache Airflow — orchestration
+**GeoPulse** is an end-to-end geospatial retail analytics platform designed to convert anonymized GPS mobility data, commercial zoning boundaries, and retail store footprints into actionable business intelligence.
 
-## Repository structure
+Retail decision-makers can answer critical questions:
+- **Where are our customers coming from?** (Customer origin & travel distance)
+- **Which retail locations capture the highest footfall?** (Peak visit volume & dwell times)
+- **What are the busiest hours and days per store?** (Hourly traffic trends)
+- **What is the true geographic catchment area of each store?** (50m visit candidate & 5km catchment mapping)
+- **Which stores have overlapping customer pools?** (Spatial overlap analysis)
+- **Are our own stores cannibalizing each other?** (Cannibalization scoring & risk levels)
+- **Where should we locate our next store?** (White-space gap analysis)
+
+> **Privacy & Ethics Notice**: GeoPulse is currently developed using synthetic mobility observations. No real individual consumer trajectories or Personally Identifiable Information (PII) are stored or analyzed.
+
+---
+
+## 2. Technology Stack
+
+| Technology | Purpose | Module Responsibility |
+|---|---|---|
+| **Python 3.10+** | Core programming language & data pipelines | Cross-Module |
+| **Pandas & NumPy** | Data ingestion, vectorization, and data quality cleaning | Module 1 (Data Engineering) |
+| **Haversine** | Great-circle geographic distance calculations | Module 1 (Data Engineering) |
+| **Apache Sedona / GeoPandas** | Spatial joins, point-in-polygon & geometry operations | Module 1 (Spatial Processing) |
+| **Snowflake** | Cloud data warehouse (RAW, STAGING, PROCESSED, ANALYTICS) | Module 1 / Module 2 |
+| **dbt (dbt-snowflake)** | SQL-based transformations (Staging, Intermediate, Marts) | Module 2 (Analytics) |
+| **Kepler.gl** | Interactive geospatial visualization dashboards | Module 2 (Analytics) |
+| **Plotly** | Time-series, hourly distribution & footfall charts | Module 2 (Analytics) |
+| **Apache Airflow** | Orchestration DAGs across pipelines | Module 3 (Shared) |
+| **pytest** | Unit, integration, and data integrity test suite | Module 3 (Shared) |
+
+---
+
+## 3. High-Level Architecture & Data Flow
+
+```
+   [ Synthetic GPS Mobility ]   [ Retail Store Locations ]   [ Commercial Zones ]
+               │                            │                          │
+               └───────────────────┬────────┘                          │
+                                   ▼                                   │
+                      [ Data Cleaning & Quality ]                      │
+                       (Filter out-of-bounds,                          │
+                        deduplicate, ISO-8601)                         │
+                                   │                                   │
+                                   ▼                                   │
+                      [ Haversine & Nearest Store ]                    │
+                                   │                                   │
+                                   ▼                                   │
+                      [ Visit Detection Engine ]                       │
+                       (Radius: 50m, Min dwell: 5m)                    │
+                                   │                                   │
+                                   ▼                                   │
+                      [ Apache Sedona Spatial Join ] ◄─────────────────┘
+                                   │
+                                   ▼
+                       [ Snowflake Data Warehouse ]
+                       (RAW ➔ STAGING ➔ PROCESSED)
+                                   │
+                                   ▼
+                       [ dbt Data Transformations ]
+                       (STAGING ➔ INTERMEDIATE ➔ MARTS)
+                                   │
+               ┌───────────────────┼───────────────────┐
+               ▼                   ▼                   ▼
+       Footfall Analytics   Catchment Areas    Cannibalization Risk
+               │                   │                   │
+               └───────────────────┼───────────────────┘
+                                   ▼
+                   [ Kepler.gl & Plotly Dashboard ]
+                                   │
+                                   ▼
+                         [ Business Insights ]
+```
+
+---
+
+## 4. Repository Structure
+
 ```text
-data/                 # Synthetic raw and processed datasets
-notebooks/            # Exploration
-src/data_generation/  # Synthetic GPS ping generation
-src/data_quality/     # Schema and quality checks
-src/spatial_processing/ # Spatial joins
-src/analytics/        # Footfall and overlap metrics
-sql/snowflake/        # Snowflake SQL
-dbt/                  # dbt models
-dashboard/            # Kepler.gl/dashboard assets
-airflow/dags/         # Airflow DAGs
-tests/                # Tests
-reports/              # Findings and charts
-docs/                 # Architecture and scope
+c:\Users\yash\geoplus\
+├── data/
+│   ├── raw/                  # Raw generated GPS mobility & store files
+│   ├── processed/            # Cleaned, nearest-store, and detected visit datasets
+│   ├── reference/            # Store locations, commercial zone boundaries
+│   ├── rejected/             # Rejected records with audit logs
+│   └── quality/              # Data quality audit reports (JSON/markdown)
+├── data_engineering/
+│   ├── generation/           # GPS and store synthetic data generators
+│   ├── cleaning/             # Data cleaning and schema validation
+│   ├── spatial/              # Haversine, nearest-store, visit detection, Sedona
+│   └── validation/           # Data quality metric reporters
+├── src/                      # Scaffold package references
+│   ├── data_generation/
+│   ├── data_quality/
+│   ├── spatial_processing/
+│   └── analytics/
+├── snowflake/                # Snowflake connection logic, DDL schemas, and loaders
+├── dbt_geopulse/             # dbt transformation models (staging, intermediate, marts)
+├── airflow/
+│   └── dags/                 # Airflow pipeline DAGs
+├── dashboard/                # Kepler.gl and Plotly visual interfaces
+├── documentation/            # Complete Phase 1 & 2 architecture & contract docs
+├── config/                   # Centralized configuration (settings.py)
+├── tests/                    # Pytest test suite
+├── AI_README.md              # AI Project Memory & Development History
+├── README.md                 # User & developer facing documentation
+└── requirements.txt          # Python dependencies
 ```
 
-## Milestones
-1. Define schema and generate synthetic GPS pings.
-2. Validate coordinates and timestamps.
-3. Design Snowflake tables and load data if account access is available.
-4. Implement point-in-polygon spatial joins.
-5. Aggregate hourly footfall with dbt.
-6. Estimate catchment overlap.
-7. Visualize results with Kepler.gl.
-8. Add orchestration and tests.
+---
 
-## Quick start
-Python 3.10+ recommended.
-```bash
+## 5. Quick Start & Setup
+
+### Prerequisites
+- Python 3.10 or higher
+- Git
+
+### Installation
+```powershell
+# 1. Clone repository & enter folder
+cd c:\Users\yash\geoplus
+
+# 2. Create virtual environment
 python -m venv .venv
-# Windows PowerShell:
 .venv\Scripts\Activate.ps1
+
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Configure environment
+copy .env.example .env
 ```
 
-This is scaffolding only. Do not claim cloud/tool integrations until they are configured and tested.
+---
 
+## 6. Execution Guide
+
+```powershell
+# Run Unit Tests
+pytest tests/ -v
+```
+
+---
+
+## 7. Documentation Index
+
+- [Project Overview](documentation/project_overview.md)
+- [Functional Requirements](documentation/functional_requirements.md)
+- [Non-Functional Requirements](documentation/non_functional_requirements.md)
+- [System Architecture](documentation/system_architecture.md)
+- [Data Flow Diagram](documentation/data_flow.md)
+- [Module Design](documentation/module_design.md)
+- [Database & Schema Design](documentation/database_design.md)
+- [Data Dictionary](documentation/data_dictionary.md)
+- [Data Contracts](documentation/data_contracts.md)
+- [Snowflake Schema DDL](documentation/sql/snowflake_schema.sql)
+
+---
+
+## 8. License & Team
+Developed under MIT License for GeoPulse Mobility Analytics.

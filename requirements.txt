@@ -1,1 +1,33 @@
-pandas>=2.2,<3.0\nnumpy>=1.26,<3.0\npython-dateutil>=2.9\npytest>=8.0\n
+# GeoPulse Core Dependencies
+
+# Core Data Processing
+pandas>=2.2.0,<3.0.0
+numpy>=1.26.0,<3.0.0
+python-dateutil>=2.9.0
+
+# Geospatial Processing
+haversine>=2.8.0
+geopandas>=0.14.0
+shapely>=2.0.0
+pyproj>=3.6.0
+apache-sedona>=1.5.0
+
+# Snowflake Integration
+snowflake-connector-python>=3.5.0
+snowflake-sqlalchemy>=1.5.0
+
+# dbt Transformations
+dbt-snowflake>=1.7.0
+
+# Orchestration
+apache-airflow>=2.8.0
+
+# Visualization & Dashboard
+keplergl>=0.3.2
+plotly>=5.18.0
+
+# Configuration & Utilities
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=8.0.0
