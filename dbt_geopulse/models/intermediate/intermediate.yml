@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: int_valid_store_visits
+    description: "Filtered visits meeting dwell duration thresholds (5 - 180 min) for active stores."
+    columns:
+      - name: visit_id
+        tests:
+          - unique
+          - not_null
+      - name: dwell_time_minutes
+        tests:
+          - not_null
+
+  - name: int_visit_time_dimensions
+    description: "Visit events enriched with calendar and daypart attributes."
+    columns:
+      - name: visit_id
+        tests:
+          - unique
+          - not_null
+      - name: is_weekend
+        tests:
+          - not_null
+      - name: daypart_bucket
+        tests:
+          - accepted_values:
+              values: ['Morning', 'Afternoon', 'Evening', 'Night']
+
+  - name: int_visit_zone_mapping
+    description: "Visits joined with commercial zoning boundaries."
+    columns:
+      - name: visit_id
+        tests:
+          - unique
+          - not_null
+      - name: zone_id
+        tests:
+          - not_null
+
+  - name: int_store_footfall_base
+    description: "Daily aggregated store footfall metrics."
+    columns:
+      - name: store_id
+        tests:
+          - not_null
+      - name: visit_date
+        tests:
+          - not_null

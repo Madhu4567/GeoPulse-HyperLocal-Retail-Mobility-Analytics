@@ -1,0 +1,95 @@
+version: 2
+
+sources:
+  - name: raw
+    database: GEOPULSE_DB
+    schema: RAW
+    tables:
+      - name: raw_gps_mobility
+        description: "Raw ingested GPS mobility observations."
+      - name: raw_store_locations
+        description: "Raw ingested retail store locations catalog."
+
+  - name: reference
+    database: GEOPULSE_DB
+    schema: REFERENCE
+    tables:
+      - name: commercial_zones
+        description: "Commercial zoning polygon reference data."
+
+  - name: processed
+    database: GEOPULSE_DB
+    schema: PROCESSED
+    tables:
+      - name: detected_store_visits
+        description: "Detected store visits from spatial clustering engine."
+      - name: store_zone_mapping
+        description: "Point-in-polygon assignment of stores to zones."
+
+models:
+  - name: stg_gps_mobility
+    description: "Sanitized GPS mobility pings with validated coordinates."
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+      - name: latitude
+        tests:
+          - not_null
+      - name: longitude
+        tests:
+          - not_null
+
+  - name: stg_store_locations
+    description: "Standardized store master catalog."
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+      - name: store_category
+        tests:
+          - not_null
+      - name: store_status
+        tests:
+          - accepted_values:
+              values: ['active', 'inactive', 'closed']
+
+  - name: stg_store_visits
+    description: "Validated store visit events."
+    columns:
+      - name: visit_id
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+      - name: store_id
+        tests:
+          - not_null
+      - name: dwell_time_minutes
+        tests:
+          - not_null
+
+  - name: stg_commercial_zones
+    description: "Standardized commercial zone reference data."
+    columns:
+      - name: zone_id
+        tests:
+          - unique
+          - not_null
+      - name: zone_type
+        tests:
+          - not_null
+
+  - name: stg_store_zone_mapping
+    description: "Store to commercial zone spatial associations."
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+      - name: zone_id
+        tests:
+          - not_null

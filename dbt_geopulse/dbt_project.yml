@@ -1,0 +1,35 @@
+# =============================================================================
+# GeoPulse dbt Project Configuration
+# =============================================================================
+
+name: 'geopulse'
+version: '1.0.0'
+config-version: 2
+
+# Profile connecting to Snowflake (or local target)
+profile: 'geopulse_profile'
+
+# Directory configuration
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Global model configurations
+models:
+  geopulse:
+    staging:
+      +materialized: view
+      +schema: STAGING
+    intermediate:
+      +materialized: table
+      +schema: INTERMEDIATE
+    marts:
+      +materialized: table
+      +schema: ANALYTICS

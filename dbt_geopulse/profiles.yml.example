@@ -1,0 +1,19 @@
+# =============================================================================
+# GeoPulse dbt Connection Profile Template
+# Copy this to ~/.dbt/profiles.yml or dbt_geopulse/profiles.yml
+# =============================================================================
+
+geopulse_profile:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT', '') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', '') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD', '') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'ACCOUNTADMIN') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'GEOPULSE_DB') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'GEOPULSE_WH') }}"
+      schema: STAGING
+      threads: 4
+      client_session_keep_alive: False

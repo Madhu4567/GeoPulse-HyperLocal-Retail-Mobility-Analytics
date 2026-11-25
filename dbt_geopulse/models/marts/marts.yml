@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: mart_store_footfall
+    description: "Store-level footfall analytics including total visits, unique patrons, dwell duration, and rankings."
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+      - name: total_visits
+        tests:
+          - not_null
+      - name: store_footfall_rank
+        tests:
+          - not_null
+
+  - name: mart_hourly_footfall
+    description: "Hourly visitor traffic distribution and peak operational hour flags."
+    columns:
+      - name: store_id
+        tests:
+          - not_null
+      - name: hour_of_day
+        tests:
+          - not_null
+      - name: hourly_visits
+        tests:
+          - not_null
+
+  - name: mart_daily_footfall
+    description: "Daily traffic patterns with weekday and weekend comparative performance."
+    columns:
+      - name: store_id
+        tests:
+          - not_null
+      - name: visit_date
+        tests:
+          - not_null
+
+  - name: mart_zone_footfall
+    description: "Commercial zone vitality metrics, store counts, and visit densities."
+    columns:
+      - name: zone_id
+        tests:
+          - unique
+          - not_null
+      - name: visits_per_sq_km
+        tests:
+          - not_null
+
+  - name: mart_store_performance
+    description: "Comprehensive store performance scorecard combining volume, dwell, peak hours, and weekend lift."
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+      - name: portfolio_rank
+        tests:
+          - not_null
