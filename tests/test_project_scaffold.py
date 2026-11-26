@@ -1,1 +1,17 @@
-from pathlib import Path\n\ndef test_expected_project_directories_exist():\n    root = Path(__file__).resolve().parents[1]\n    for folder in ['data', 'src', 'sql', 'dbt', 'dashboard', 'airflow', 'tests', 'docs']:\n        assert (root / folder).is_dir()\n
+from pathlib import Path
+
+
+def test_expected_project_directories_exist():
+    root = Path(__file__).resolve().parents[1]
+
+    for folder in [
+        "data",
+        "src",
+        "sql",
+        "dbt",
+        "dashboard",
+        "airflow",
+        "tests",
+        "docs",
+    ]:
+        assert (root / folder).is_dir()
