@@ -1,7 +1,7 @@
-
 from pathlib import Path
 
 import pandas as pd
+
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -87,6 +87,43 @@ def validate_store_data_types(df):
     return invalid_types
 
 
+def get_data_quality_report():
+    gps_file = RAW_DIR / "gps_pings.csv"
+    store_file = RAW_DIR / "store_locations.csv"
+
+    gps_df = pd.read_csv(gps_file)
+    store_df = pd.read_csv(store_file)
+
+    gps_report = {
+        "total_records": len(gps_df),
+        "missing_columns": validate_columns(
+            gps_df,
+            ["device_id", "latitude", "longitude", "timestamp"]
+        ),
+        "null_values": int(validate_nulls(gps_df).sum()),
+        "duplicate_records": int(validate_duplicates(gps_df)),
+        "invalid_coordinates": int(validate_coordinates(gps_df)),
+        "invalid_timestamps": int(validate_timestamps(gps_df)),
+        "invalid_data_types": validate_gps_data_types(gps_df)
+    }
+
+    store_report = {
+        "total_records": len(store_df),
+        "missing_columns": validate_columns(
+            store_df,
+            ["store_id", "store_name", "latitude", "longitude"]
+        ),
+        "null_values": int(validate_nulls(store_df).sum()),
+        "duplicate_records": int(validate_duplicates(store_df)),
+        "duplicate_store_ids": int(store_df["store_id"].duplicated().sum()),
+        "invalid_coordinates": int(validate_coordinates(store_df)),
+        "invalid_data_types": validate_store_data_types(store_df)
+    }
+
+    return {
+        "gps": gps_report,
+        "stores": store_report
+    }
 
 def validate_gps_data():
     file_path = RAW_DIR / "gps_pings.csv"

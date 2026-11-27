@@ -27,7 +27,15 @@ def main():
 
     footfall = pd.read_csv(FILES["footfall"])
     performance = pd.read_csv(FILES["performance"])
+    performance = performance.drop(
+    columns=["total_gps_pings", "unique_devices"],
+    errors="ignore"
+)
     catchment = pd.read_csv(FILES["catchment"])
+    catchment = catchment.drop(
+    columns=["total_gps_pings"],
+    errors="ignore"
+)
     mobility = pd.read_csv(FILES["mobility"])
 
     # Merge store-level analytics
